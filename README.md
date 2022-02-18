@@ -30,86 +30,85 @@ Wishlist
 
 Examples
 --------
+### Basic Setup
+#### `/main.py`
+```python
+import sqeezz
 
-  1. Basic Setup
-    #### `/main.py`
-    ```python
-    import sqeezz
 
-    
-    def main():
-        sqeezz.config('.config.app')
-        
-        app = sqeezz.resource('app')
-    
-        app().main()
-    ```
-    ---
-    #### `/config/app.py`
-    ```python
-    def config_init(register):
-        register('app').load('.app.main')
-        fetch = register('fetch').load_now('.app.utils.fetch')
-        model = register('user.model').load('.app.models.user')
-        with register('user').load('.app.routes.users') as user:
-            user.model = model()
-            user.fetch = fetch()
-    ```
-    ---
-    #### `/app/main.py`
-    ```python
-    from sqeezz import inject, resource
-    
-    
-    UserAPI = resource('user')
-    
-    
-    @inject
-    def main(Users: UserAPI):
-        users_api = Users()
+def main():
+    sqeezz.config('.config.app')
 
-        # Use the users_api
-    ```
-    ---
-    #### `/app/utils/fetch.py`
-    ```python
-    import requests
-    
-    
-    delete = requests.delete
-    get = requests.get
-    post = requests.post
-    put = requests.put
-    ```
-    ---
-    #### `/app/routes/users.py`
-    ```python
-    from sqeezz import future
-    
-    
-    fetch = None
-    model = None
-    
-    
-    @future
-    class Users:
-        def create(self, user: model.UserCreate):
-            return fetch.post(model.post_url(), data=user)
+    app = sqeezz.resource('app')
 
-        def delete(self, id: str):
-            return fetch.delete(model.delete_url(id))
+    app().main()
+```
+---
+#### `/config/app.py`
+```python
+def config_init(register):
+    register('app').load('.app.main')
+    fetch = register('fetch').load_now('.app.utils.fetch')
+    model = register('user.model').load('.app.models.user')
+    with register('user').load('.app.routes.users') as user:
+        user.model.assign(model)
+        user.fetch.assign(fetch)
+```
+---
+#### `/app/main.py`
+```python
+from sqeezz import inject, resource
 
-        def get(self, id: str = None):
-            if id is not None:
-                return fetch.get(model.get_url(id))
 
-            return fetch.get(model.get_all_url())
+UserAPI = resource('user').using('Users')
 
-        def update(self, user: model.UserUpdate):
-            return fetch.put(model.put_url(), data=user)
-    ```
-    ---
-    #### `/app/models/user.py`
-    ```python
-    
-    ```
+
+@inject
+def main(Users: UserAPI):
+    users_api = Users()
+
+    # Use the users_api
+```
+---
+#### `/app/utils/fetch.py`
+```python
+import requests
+
+
+delete = requests.delete
+get = requests.get
+post = requests.post
+put = requests.put
+```
+---
+#### `/app/routes/users.py`
+```python
+from sqeezz import future
+
+
+fetch = None
+model = None
+
+
+@future
+class Users:
+    def create(self, user: model.UserCreate):
+        return fetch.post(model.post_url(), data=user)
+
+    def delete(self, id: str):
+        return fetch.delete(model.delete_url(id))
+
+    def get(self, id: str = None):
+        if id is not None:
+            return fetch.get(model.get_url(id))
+
+        return fetch.get(model.get_all_url())
+
+    def update(self, user: model.UserUpdate):
+        return fetch.put(model.put_url(), data=user)
+```
+---
+#### `/app/models/user.py`
+```python
+
+```
