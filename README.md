@@ -50,9 +50,12 @@ def config_init(register):
     register('app').load('.app.main')
     fetch = register('fetch').load_now('.app.utils.fetch')
     model = register('user.model').load('.app.models.user')
-    with register('user').load('.app.routes.users') as user:
+    with register('user.routes').load('.app.routes.users') as user:
         user.model.assign(model)
         user.fetch.assign(fetch)
+
+    register('user.api.one').assign(lambda id: f'/api/users/{id}')
+    register('user.api').assign(lambda: '/api/users')
 ```
 ---
 #### `/app/main.py`
@@ -83,8 +86,11 @@ put = requests.put
 ---
 #### `/app/routes/users.py`
 ```python
-from sqeezz import future
+from sqeezz import future, inject, resource
 
+
+API = resource('user.api')
+API_ONE = resource('user.api.one')
 
 fetch = None
 model = None
@@ -92,20 +98,24 @@ model = None
 
 @future
 class Users:
-    def create(self, user: model.UserCreate):
-        return fetch.post(model.post_url(), data=user)
+    @inject
+    def create(self, user: model.UserCreate, url=API):
+        return fetch.post(url(), data=user)
 
-    def delete(self, id: str):
-        return fetch.delete(model.delete_url(id))
+    @inject
+    def delete(self, id: str, url=API_ONE):
+        return fetch.delete(url(id))
 
-    def get(self, id: str = None):
+    @inject
+    def get(self, id: str = None, url=API, url_one=API_ONE):
         if id is not None:
-            return fetch.get(model.get_url(id))
+            return fetch.get(url_one(id))
 
-        return fetch.get(model.get_all_url())
+        return fetch.get(url())
 
-    def update(self, user: model.UserUpdate):
-        return fetch.put(model.put_url(), data=user)
+    @inject
+    def update(self, user: model.UserUpdate, url=API):
+        return fetch.put(url(), data=user)
 ```
 ---
 #### `/app/models/user.py`
