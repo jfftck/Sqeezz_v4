@@ -5,10 +5,10 @@ About
 -----
 
 Sqeezz is a dependency management library, it contains modules to handle injection, importing, and simple lifecycle management.
-The tools provided are simple, small, and fast to load; this should make little impact on performance but will increase memory useage.
+The tools provided are simple, small, and fast to load; this should make little impact on performance but will increase memory usage.
 
 Sqeezz had been created long ago as a personal project and this is the 4th iteration of this library, but this will be the first public release.
-The earier ones were more like revisions and will be renumbered to 0.0.1, 0.0.2, and 0.0.3, due to none of them being a release quality version and more like demos.
+The earlier ones were more like revisions and will be renumbered to 0.0.1, 0.0.2, and 0.0.3, due to none of them being a release quality version and more like demos.
 
 This is a complete rewrite of the Sqeezz dependency management library for the current versions of Python, as the older versions were for Python 2.7 and then ported over to Python 3, which left a lot of older libraries being used and had reduced maintainability.
 Only supported versions of Python are supported by this library, this will be a rolling release model where version number will match the lowest Python version point release that is supported.
@@ -21,8 +21,8 @@ Features
 - Everything is explicit in definition, there is no auto wiring
 - Simple functions build up the entire library
 - Built with Pythonic design
-- All of the functions are exposed to allow extention of the library
-- No external dependencies outside of the standard Python libraries
+- All the functions are exposed to allow extension of the library
+- No external dependencies outside the standard Python libraries
 
 Wishlist
 --------
