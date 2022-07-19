@@ -23,6 +23,7 @@ Features
 - Built with Pythonic design
 - All the functions are exposed to allow extension of the library
 - No external dependencies outside the standard Python libraries
+- Handlers for common validations with the ability to create custom validations
 
 Wishlist
 --------
@@ -30,6 +31,10 @@ Wishlist
 - [ ] Works with multiple flavors of Python (PyPy, Cython, etc...)
 - [ ] Support compiling to an executable
 - [ ] Translate to other languages (JavaScript/TypeScript, Ruby, Java, etc...)
+- [ ] Precompile static code injection and create a production ready copy, this would remove the look-up and reduce memory usage
+  - [ ] Precompile multiple code branches from dynamic to static
+- [ ] Compile to byte-code based on precompiled static code
+- [ ] Precompile any branch of code to remove any unnecessary objects and/or variables to reduce memory usage and increase performance
 
 Examples
 --------
@@ -119,7 +124,7 @@ API = resource('user.api')
 API_ALL = API('all')  
 API_ONE = API('one')  
 
-UserCreate = Handlers.instance_of(resource('user.model.create'))  
+UserCreate = Handlers.instance_of(resource('user.model.create')).required()  
 UserUpdate = Handlers.instance_of(resource('user.model.update'))  
 
 fetch = resource()  
@@ -156,14 +161,17 @@ from dataclasses import dataclass
 @dataclass
 class CreateUser:
     name: str
-    user-name: str
+    user_name: str
     password: str
     metadata: dict[str, str]
+
+    def required(self):
+        return self.name is not null and self.user_name is not null and password is not null
 
 @dataclass
 class UpdateUser:
     name: str
-    user-name: str
+    user_name: str
     password: str
     metadata: dict[str, str]
 ```
