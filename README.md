@@ -35,6 +35,7 @@ Wishlist
   - [ ] Precompile multiple code branches from dynamic to static
 - [ ] Compile to byte-code based on precompiled static code
 - [ ] Precompile any branch of code to remove any unnecessary objects and/or variables to reduce memory usage and increase performance
+- [ ] Tree shaking and additional code optimizations
 
 Examples
 --------
@@ -124,8 +125,8 @@ API = resource('user.api')
 API_ALL = API('all')  
 API_ONE = API('one')  
 
-UserCreate = Handlers.instance_of(resource('user.model.create')).required()  
-UserUpdate = Handlers.instance_of(resource('user.model.update'))  
+UserCreate = Handlers.instance_of(resource('user.model.create')).required().to_json()  
+UserUpdate = Handlers.instance_of(resource('user.model.update')).to_json()  
 
 fetch = resource()  
 
