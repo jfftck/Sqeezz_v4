@@ -2,11 +2,18 @@ from importlib import import_module
 from importlib.util import find_spec, module_from_spec, spec_from_file_location
 from os import path
 from sys import modules
-
-from ..sqeezzutils import LazyLoad
+from typing import Any, Callable
 
 
 _base_package = modules['__main__']
+
+
+class LazyLoad:
+  def __init__(self, func: Callable[..., Any]):
+    self.__func = func
+
+  def __call__(self, *args, **kwargs):
+    return self.__func(*args, **kwargs)
 
 
 def lazy_module(mod: str):
